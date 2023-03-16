@@ -1,0 +1,17 @@
+from lmfit.models import StepModel, ConstantModel
+model = StepModel(form='linear', prefix='step1_')+ConstantModel(prefix='const_')+StepModel(form='linear', prefix='step2_')
+params = model.make_params()
+params.add('step1_amplitude',value=1) # HV value
+params.add('step1_center',value=1e-6) # ramp start time
+params.add('step1_sigma',value=1e-6) # ramp width
+params.add('step2_amplitude',value=0.1) # HV value
+params.add('step2_center',value=2.5e-6, min = 0,max = max(HVtlist)) # ramp start time
+params.add('step2_sigma',value=5e-6) # ramp width
+params.add('const_c',value=0, min=-0.1 ,max=0.1) # base value
+
+out = model.fit(HVsignal,params=params,x=HVtlist)
+
+tstart1 = out.params['step1_center'].value
+tstop1 = out.params['step1_center'].value + out.params['step1_sigma'].value
+tstart2 = out.params['step2_center'].value
+tstop2 = out.params['step2_center'].value + out.params['step2_sigma'].value
